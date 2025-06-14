@@ -1,9 +1,9 @@
 name: Daily Commit
 
 on:
-  workflow_dispatch:  # <-- Allows manual trigger
+  workflow_dispatch:    # Manual trigger
   schedule:
-    - cron: '30 5 * * *'  # Daily at 11:00 AM IST
+    - cron: '30 5 * * *'   # Every day at 11:00 AM IST
 
 jobs:
   commit:
@@ -18,5 +18,8 @@ jobs:
           git config --global user.email "22f3001454@ds.study.iitm.ac.in"
           git config --global user.name "Daily Commit Bot"
           git add daily.txt
-          git commit -m "Daily commit on $(date)"
-          git push
+          git commit -m "Daily commit on $(date)" || echo "No changes to commit"
+
+      - name: Push changes
+        run: |
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:main
