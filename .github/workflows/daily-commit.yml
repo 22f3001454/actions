@@ -1,25 +1,27 @@
 name: Daily Commit
 
 on:
-  workflow_dispatch:    # Manual trigger
+  workflow_dispatch: # allows manual run
   schedule:
-    - cron: '30 5 * * *'   # Every day at 11:00 AM IST
+    - cron: '30 5 * * *' # runs every day at 11:00 AM IST
 
 jobs:
   commit:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # REQUIRED to push code!
+
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Add dummy commit by 22f3001454@ds.study.iitm.ac.in
+      - name: Make a dummy change by 22f3001454@ds.study.iitm.ac.in
         run: |
           echo "Commit at $(date)" >> daily.txt
-          git config --global user.email "22f3001454@ds.study.iitm.ac.in"
-          git config --global user.name "Daily Commit Bot"
+          git config user.name "Daily Commit Bot"
+          git config user.email "22f3001454@ds.study.iitm.ac.in"
           git add daily.txt
-          git commit -m "Daily commit on $(date)" || echo "No changes to commit"
+          git commit -m "Daily commit on $(date)" || echo "Nothing to commit"
 
       - name: Push changes
-        run: |
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:main
+        run: git push
